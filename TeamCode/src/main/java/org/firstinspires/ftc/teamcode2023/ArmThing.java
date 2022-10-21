@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -49,31 +50,21 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="MecanumWheels", group="Iterative Opmode")
+@TeleOp(name="ArmThing", group="Iterative Opmode")
 @Disabled
-public class MecanumWheels extends OpMode
+public class ArmThing extends OpMode
 {
 
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftFront = null;
-    private DcMotor leftBack = null;
-    private DcMotor rightFront = null;
-    private DcMotor rightBack = null;
+    private DcMotor motor = null;
 
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {
-        leftFront  = hardwareMap.get(DcMotor.class, "left_front");
-        leftBack = hardwareMap.get(DcMotor.class, "left_back");
-        rightFront = hardwareMap.get(DcMotor.class, "right_front");
-        rightBack = hardwareMap.get(DcMotor.class, "right_back");
-
-        leftFront.setDirection(DcMotor.Direction.FORWARD);
-        leftBack.setDirection(DcMotor.Direction.FORWARD);
-        rightFront.setDirection(DcMotor.Direction.REVERSE);
-        rightBack.setDirection(DcMotor.Direction.REVERSE);
+        motor = hardwareMap.get(DcMotor.class, "motor");
+        motor.setDirection(DcMotor.Direction.FORWARD);
     }
 
     /*
@@ -97,6 +88,9 @@ public class MecanumWheels extends OpMode
      */
     @Override
     public void loop() {
+        double power;
+        power  = -gamepad1.left_stick_y ;
+        motor.setPower(power);
     }
 
     /*
