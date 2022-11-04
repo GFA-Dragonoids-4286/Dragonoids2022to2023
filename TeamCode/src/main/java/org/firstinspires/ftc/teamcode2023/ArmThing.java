@@ -89,7 +89,11 @@ public class ArmThing extends OpMode
     @Override
     public void loop() {
         double power;
-        power  = -gamepad1.left_stick_y ;
+        power = 0;
+        if (gamepad1.a){
+            power  = 0.5;
+        }
+
         motor.setPower(power);
     }
 
