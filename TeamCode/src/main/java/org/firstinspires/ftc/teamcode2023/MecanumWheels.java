@@ -159,7 +159,16 @@ public class MecanumWheels extends OpMode
      */
     @Override
     public void stop() {
-
+        // Create an Array of Possible Sayings the Robot can Say When it Shuts Down 
+        String[] possibleSayings = new String[] { 
+            "Goodbye", 
+            "Sweet Dreams", 
+            "Boop Beep.", 
+            "No Longer Taking Over The World", 
+            "Thinking About Our Win", 
+            "Preparing for the Post-Win Party" 
+        }; 
+        telemetry.addData("Status", possibleSayings[(int) (Math.random() * possibleSayings.length)]);
     }
 
 }
