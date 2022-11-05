@@ -81,6 +81,16 @@ public class MecanumWheels extends OpMode
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
+
+        String [] sayings =
+                new String[] {
+                        "Let's Roll",
+                        "Ready to Rumble",
+                        "Beep Boop",
+                        "Taking over the World",
+                        "About to win the contest"
+                };
+        telemetry.addData("Status: ", sayings[(int) (Math.random() * sayings.length)]);
     }
 
     /*
@@ -116,7 +126,6 @@ public class MecanumWheels extends OpMode
         double max = Math.max(Math.abs(sin),
                 Math.abs(cos));
 
-
         leftFrontPower =  power * cos/max + turn;
         rightFrontPower = power * sin/max - turn;
         leftBackPower = power * sin/max + turn;
@@ -133,6 +142,15 @@ public class MecanumWheels extends OpMode
         leftBack.setPower(leftBackPower);
         rightFront.setPower(rightFrontPower);
         rightBack.setPower(rightBackPower);
+
+        telemetry.addData("Theta = ", theta);
+        telemetry.addData("Turn = ", turn);
+        telemetry.addData("Power = ", power);
+
+        telemetry.addData("leftFrontPower = ", leftFrontPower);
+        telemetry.addData("leftBackPower = ", leftBackPower);
+        telemetry.addData("rightFrontPower = ", rightFrontPower);
+        telemetry.addData("rightBackPower = ", rightBackPower);
 
     }
 
