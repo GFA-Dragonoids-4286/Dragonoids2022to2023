@@ -55,10 +55,17 @@ public class MecanumWheels extends OpMode
 {
 
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftFront = null;
-    private DcMotor leftBack = null;
-    private DcMotor rightFront = null;
-    private DcMotor rightBack = null;
+    private DcMotor leftFront;
+    private DcMotor leftBack;
+    private DcMotor rightFront;
+    private DcMotor rightBack;
+    private double leftFrontPower;
+    private double leftBackPower;
+    private double rightFrontPower;
+    private double rightBackPower;
+    private double sin;
+    private double cos;
+    //private double power;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -97,20 +104,30 @@ public class MecanumWheels extends OpMode
      */
     @Override
     public void loop() {
-        double x = gamepad1.left_stick_x
-        double y = gamepad1.left_stick_y
-        double theta = Math.atan(y/x);
-        if (x > 0 && y > 0){
-            theta = theta;
-        } else if (x < 0 && y > 0){
-            theta -= 180;
-        } else if (x > 0 && y < 0){
-            theta += 180;
-        } else if (x < 0 && y < 0){
-            theta = -theta;
+        double x = gamepad1.left_stick_x;
+        double y = -gamepad1.left_stick_y;
+        double turn = gamepad1.right_stick_x;
+
+        double theta = Math.atan2(y,x);
+        double power = Math.hypot(x,y);
+
+        sin = Math.sin(theta - Math.PI / 4);
+        cos = Math.cos(theta - Math.PI/4);
+        double max = Math.max(Math.abs(sin),
+                Math.abs(cos));
+
+
+        leftFrontPower =  power * cos/max + turn;
+        rightFrontPower = power * sin/max - turn;
+        leftBackPower = power * sin/max + turn;
+        rightBackPower = power * cos/max - turn;
+
+        if ((power + Math.abs(turn)) > 1){
+            leftFrontPower /= power + turn;
+            rightFrontPower /= power + turn;
+            leftBackPower /= power + turn;
+            rightBackPower /= power + turn;
         }
-
-
 
         /*
         double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
