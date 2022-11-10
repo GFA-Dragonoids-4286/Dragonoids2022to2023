@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -55,14 +56,19 @@ public class MecanumWheels extends OpMode
 {
 
     private ElapsedTime runtime = new ElapsedTime();
+
     private DcMotor leftFront;
     private DcMotor leftBack;
     private DcMotor rightFront;
     private DcMotor rightBack;
+    private DcMotor arm;
+
     private double leftFrontPower;
     private double leftBackPower;
     private double rightFrontPower;
     private double rightBackPower;
+    private double armPower;
+
     private double sin;
     private double cos;
     //private double power;
@@ -76,11 +82,13 @@ public class MecanumWheels extends OpMode
         leftBack = hardwareMap.get(DcMotor.class, "left_back");
         rightFront = hardwareMap.get(DcMotor.class, "right_front");
         rightBack = hardwareMap.get(DcMotor.class, "right_back");
+        arm = hardwareMap.get(DcMotor.class, "arm");
 
         leftFront.setDirection(DcMotor.Direction.FORWARD);
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
+        arm.setDirection(DcMotorSimple.Direction.FORWARD);
 
         String [] sayings =
                 new String[] {
@@ -114,6 +122,7 @@ public class MecanumWheels extends OpMode
      */
     @Override
     public void loop() {
+
         double x = gamepad1.left_stick_x;
         double y = -gamepad1.left_stick_y;
         double turn = gamepad1.right_stick_x;
@@ -138,10 +147,17 @@ public class MecanumWheels extends OpMode
             rightBackPower /= power + turn;
         }
 
+        if (gamepad1.left_trigger >= .2){
+            armPower = gamepad1.left_trigger;
+        } else if (gamepad1.left_trigger < .2){
+            armPower = 0;
+        }
+
         leftFront.setPower(leftFrontPower);
         leftBack.setPower(leftBackPower);
         rightFront.setPower(rightFrontPower);
         rightBack.setPower(rightBackPower);
+        arm.setPower(armPower);
 
         telemetry.addData("Theta = ", theta);
         telemetry.addData("Turn = ", turn);
