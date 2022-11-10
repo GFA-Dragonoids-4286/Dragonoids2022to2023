@@ -181,8 +181,11 @@ public class MecanumWheels extends OpMode
             "Sweet Dreams", 
             "Boop Beep.", 
             "No Longer Taking Over The World", 
-            "Thinking About Our Win", 
-            "Preparing for the Post-Win Party" 
+            "Thinking About Our Win",
+            "Fuck Your Life; Bing Bong",
+            "Preparing for the Post-Win Party"
+
+
         }; 
         telemetry.addData("Status", possibleSayings[(int) (Math.random() * possibleSayings.length)]);
     }
