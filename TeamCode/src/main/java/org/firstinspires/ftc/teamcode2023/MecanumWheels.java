@@ -61,7 +61,8 @@ public class MecanumWheels extends OpMode
     private DcMotor leftBack;
     private DcMotor rightFront;
     private DcMotor rightBack;
-    private DcMotor arm;
+    private DcMotor armL;
+    private DcMotor armR;
 
     private double leftFrontPower;
     private double leftBackPower;
@@ -82,13 +83,15 @@ public class MecanumWheels extends OpMode
         leftBack = hardwareMap.get(DcMotor.class, "left_back");
         rightFront = hardwareMap.get(DcMotor.class, "right_front");
         rightBack = hardwareMap.get(DcMotor.class, "right_back");
-        arm = hardwareMap.get(DcMotor.class, "arm");
+        armL = hardwareMap.get(DcMotor.class, "armL");
+        armR = hardwareMap.get(DcMotor.class, "armR");
 
         leftFront.setDirection(DcMotor.Direction.FORWARD);
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
-        arm.setDirection(DcMotorSimple.Direction.FORWARD);
+        armL.setDirection(DcMotorSimple.Direction.FORWARD);
+        armL.setDirection(DcMotorSimple.Direction.FORWARD);
 
         String [] sayings =
                 new String[] {
@@ -96,6 +99,8 @@ public class MecanumWheels extends OpMode
                         "Ready to Rumble",
                         "Beep Boop",
                         "Taking over the World",
+                        "Fuck ms Smith",
+                        "I Like Caulk",
                         "About to win the contest"
                 };
         telemetry.addData("Status: ", sayings[(int) (Math.random() * sayings.length)]);
@@ -157,7 +162,8 @@ public class MecanumWheels extends OpMode
         leftBack.setPower(leftBackPower);
         rightFront.setPower(rightFrontPower);
         rightBack.setPower(rightBackPower);
-        arm.setPower(armPower);
+        armL.setPower(armPower);
+        armR.setPower(armPower);
 
         telemetry.addData("Theta = ", theta);
         telemetry.addData("Turn = ", turn);
