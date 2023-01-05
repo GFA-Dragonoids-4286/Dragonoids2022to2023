@@ -74,6 +74,50 @@ public class MecanumWheels extends OpMode
     private double cos;
     //private double power;
 
+    public void mecanumWheels(double x, double y, double turn){
+        double theta = Math.atan2(y,x);
+        double power = Math.hypot(x,y);
+
+        sin = Math.sin(theta - Math.PI / 4);
+        cos = Math.cos(theta - Math.PI/4);
+        double max = Math.max(Math.abs(sin),
+                Math.abs(cos));
+
+        leftFrontPower =  power * cos/max + turn;
+        rightFrontPower = power * sin/max - turn;
+        leftBackPower = power * sin/max + turn;
+        rightBackPower = power * cos/max - turn;
+
+        if ((power + Math.abs(turn)) > 1){
+            leftFrontPower /= power + turn;
+            rightFrontPower /= power + turn;
+            leftBackPower /= power + turn;
+            rightBackPower /= power + turn;
+        }
+
+        if (gamepad1.left_trigger >= .2){
+            armPower = gamepad1.left_trigger;
+        } else if (gamepad1.left_trigger < .2){
+            armPower = 0;
+        }
+
+        leftFront.setPower(leftFrontPower);
+        leftBack.setPower(leftBackPower);
+        rightFront.setPower(rightFrontPower);
+        rightBack.setPower(rightBackPower);
+        armL.setPower(armPower);
+        armR.setPower(armPower);
+
+        telemetry.addData("Theta = ", theta);
+        telemetry.addData("Turn = ", turn);
+        telemetry.addData("Power = ", power);
+
+        telemetry.addData("leftFrontPower = ", leftFrontPower);
+        telemetry.addData("leftBackPower = ", leftBackPower);
+        telemetry.addData("rightFrontPower = ", rightFrontPower);
+        telemetry.addData("rightBackPower = ", rightBackPower);
+    }
+
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -132,48 +176,7 @@ public class MecanumWheels extends OpMode
         double y = -gamepad1.left_stick_y;
         double turn = gamepad1.right_stick_x;
 
-        double theta = Math.atan2(y,x);
-        double power = Math.hypot(x,y);
-
-        sin = Math.sin(theta - Math.PI / 4);
-        cos = Math.cos(theta - Math.PI/4);
-        double max = Math.max(Math.abs(sin),
-                Math.abs(cos));
-
-        leftFrontPower =  power * cos/max + turn;
-        rightFrontPower = power * sin/max - turn;
-        leftBackPower = power * sin/max + turn;
-        rightBackPower = power * cos/max - turn;
-
-        if ((power + Math.abs(turn)) > 1){
-            leftFrontPower /= power + turn;
-            rightFrontPower /= power + turn;
-            leftBackPower /= power + turn;
-            rightBackPower /= power + turn;
-        }
-
-        if (gamepad1.left_trigger >= .2){
-            armPower = gamepad1.left_trigger;
-        } else if (gamepad1.left_trigger < .2){
-            armPower = 0;
-        }
-
-        leftFront.setPower(leftFrontPower);
-        leftBack.setPower(leftBackPower);
-        rightFront.setPower(rightFrontPower);
-        rightBack.setPower(rightBackPower);
-        armL.setPower(armPower);
-        armR.setPower(armPower);
-
-        telemetry.addData("Theta = ", theta);
-        telemetry.addData("Turn = ", turn);
-        telemetry.addData("Power = ", power);
-
-        telemetry.addData("leftFrontPower = ", leftFrontPower);
-        telemetry.addData("leftBackPower = ", leftBackPower);
-        telemetry.addData("rightFrontPower = ", rightFrontPower);
-        telemetry.addData("rightBackPower = ", rightBackPower);
-
+        mecanumWheels(x, y, turn);
     }
 
     /*
