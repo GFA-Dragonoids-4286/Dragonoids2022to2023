@@ -95,6 +95,7 @@ public class ArmThing extends OpMode
         }
 
         motor.setPower(power);
+        
     }
 
     /*
