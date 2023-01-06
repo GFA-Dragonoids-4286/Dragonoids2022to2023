@@ -61,8 +61,8 @@ public class MecanumWheels extends OpMode
     private DcMotor leftBack;
     private DcMotor rightFront;
     private DcMotor rightBack;
-    private DcMotor armL;
-    private DcMotor armR;
+    private DcMotor arm;
+    private Servo claw;
 
     private double leftFrontPower;
     private double leftBackPower;
@@ -70,9 +70,27 @@ public class MecanumWheels extends OpMode
     private double rightBackPower;
     private double armPower;
 
+
+    private final static double CLAW_HOME = 0.0;
+    private double clawPosition = CLAW_HOME;
+    private final double CLAW_SPEED = 0.2;
+
+    private final static double ROTATE_HOME = 0.0;
+    private double rotatePosition = ROTATE_HOME;
+    private final double ROTATE_SPEED = 0.2;
+
     private double sin;
     private double cos;
-    //private double power;
+    
+    public void arm(double left_trigger) {
+        if (left_trigger >= .2){
+            armPower = left_trigger;
+        } else if (left_trigger < .2){
+            armPower = 0;
+        }
+
+        arm.setPower(armPower);
+    }
 
     public void mecanumWheels(double x, double y, double turn){
         double theta = Math.atan2(y,x);
@@ -95,18 +113,10 @@ public class MecanumWheels extends OpMode
             rightBackPower /= power + turn;
         }
 
-        if (gamepad1.left_trigger >= .2){
-            armPower = gamepad1.left_trigger;
-        } else if (gamepad1.left_trigger < .2){
-            armPower = 0;
-        }
-
         leftFront.setPower(leftFrontPower);
         leftBack.setPower(leftBackPower);
         rightFront.setPower(rightFrontPower);
         rightBack.setPower(rightBackPower);
-        armL.setPower(armPower);
-        armR.setPower(armPower);
 
         telemetry.addData("Theta = ", theta);
         telemetry.addData("Turn = ", turn);
@@ -118,11 +128,25 @@ public class MecanumWheels extends OpMode
         telemetry.addData("rightBackPower = ", rightBackPower);
     }
 
-    /*
-     * Code to run ONCE when the driver hits INIT
-     */
-    @Override
-    public void init() {
+    public void claw (bool a, bool b){
+        if (a){
+            clawPosition += CLAW_SPEED;
+        } else if (b) {
+            clawPosition -= CLAW_SPEED;
+        }
+        claw.setPosition(clawPosition);
+    }
+
+    public void rotate (bool x, bool y){
+        if (x){
+            rotatePosition += ROTATE_SPEED;
+        } else if (y) {
+            rotatePosition -= ROTATE_SPEED;
+        }
+        rotate.setPosition(rotatePosition);
+    }
+
+    public void initMotors(){
         leftFront  = hardwareMap.get(DcMotor.class, "left_front");
         leftBack = hardwareMap.get(DcMotor.class, "left_back");
         rightFront = hardwareMap.get(DcMotor.class, "right_front");
@@ -136,6 +160,24 @@ public class MecanumWheels extends OpMode
         rightBack.setDirection(DcMotor.Direction.REVERSE);
         armL.setDirection(DcMotorSimple.Direction.FORWARD);
         armL.setDirection(DcMotorSimple.Direction.FORWARD);
+    }
+    
+    public void initServos(){
+        claw = hardwareMap.servo.get("claw");
+        arm.setPosition(ARM_HOME);
+
+        rotate = hardwareMap.servo.get("rotate");
+        rotate.setPosition(ROTATE_HOME);
+    }
+
+    /*
+     * Code to run ONCE when the driver hits INIT
+     */
+    @Override
+    public void init() {
+        
+        initMotors();
+        initServos();
 
         String [] sayings =
                 new String[] {
@@ -172,11 +214,21 @@ public class MecanumWheels extends OpMode
     @Override
     public void loop() {
 
-        double x = gamepad1.left_stick_x;
-        double y = -gamepad1.left_stick_y;
+        double left_stick_x = gamepad1.left_stick_x;
+        double left_stick_y = -gamepad1.left_stick_y;
         double turn = gamepad1.right_stick_x;
 
-        mecanumWheels(x, y, turn);
+        double a = gamepad1.a;
+        double b = gamepad1.b;
+        double x = gamepad1.x;
+        double y = gamepad1.y;
+
+        double left_trigger = gamepad1.left_trigger;
+
+        mecanumWheels(left_stick_x, left_stick_y, turn);
+        claw(a,b);
+        rotate(x, y);
+        arm(left_trigger);
     }
 
     /*
@@ -193,8 +245,6 @@ public class MecanumWheels extends OpMode
             "Thinking About Our Win",
             "Fuck Your Life; Bing Bong",
             "Preparing for the Post-Win Party"
-
-
         }; 
         telemetry.addData("Status", possibleSayings[(int) (Math.random() * possibleSayings.length)]);
     }
