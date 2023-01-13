@@ -63,6 +63,7 @@ public class MecanumWheels extends OpMode
     private DcMotor rightBack;
     private DcMotor arm;
     private Servo claw;
+    private Servo rotate;
 
     private double leftFrontPower;
     private double leftBackPower;
