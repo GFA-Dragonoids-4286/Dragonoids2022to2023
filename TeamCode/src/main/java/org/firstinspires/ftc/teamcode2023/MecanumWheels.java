@@ -151,15 +151,13 @@ public class MecanumWheels extends OpMode
         leftBack = hardwareMap.get(DcMotor.class, "left_back");
         rightFront = hardwareMap.get(DcMotor.class, "right_front");
         rightBack = hardwareMap.get(DcMotor.class, "right_back");
-        armL = hardwareMap.get(DcMotor.class, "armL");
-        armR = hardwareMap.get(DcMotor.class, "armR");
+        arm = hardwareMap.get(DcMotor.class, "arm");
 
         leftFront.setDirection(DcMotor.Direction.FORWARD);
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
-        armL.setDirection(DcMotorSimple.Direction.FORWARD);
-        armL.setDirection(DcMotorSimple.Direction.FORWARD);
+        arm.setDirection(DcMotorSimple.Direction.FORWARD);
     }
     
     public void initServos(){
