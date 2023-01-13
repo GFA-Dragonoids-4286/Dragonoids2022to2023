@@ -129,7 +129,7 @@ public class MecanumWheels extends OpMode
         telemetry.addData("rightBackPower = ", rightBackPower);
     }
 
-    public void claw (bool a, bool b){
+    public void claw (boolean a, boolean b){
         if (a){
             clawPosition += CLAW_SPEED;
         } else if (b) {
@@ -138,7 +138,7 @@ public class MecanumWheels extends OpMode
         claw.setPosition(clawPosition);
     }
 
-    public void rotate (bool x, bool y){
+    public void rotate (boolean x, boolean y){
         if (x){
             rotatePosition += ROTATE_SPEED;
         } else if (y) {
