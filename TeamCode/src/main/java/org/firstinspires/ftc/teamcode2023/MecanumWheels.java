@@ -30,6 +30,8 @@
 package org.firstinspires.ftc.teamcode2023;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -50,17 +52,16 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="MecanumWheels", group="Iterative Opmode")
-@Disabled
-public class MecanumWheels extends OpMode
+@TeleOp(name="NewDrive", group="Iterative Opmode")
+public class NewDrive extends OpMode
 {
 
     private ElapsedTime runtime = new ElapsedTime();
 
-    private DcMotor leftFront;
-    private DcMotor leftBack;
-    private DcMotor rightFront;
-    private DcMotor rightBack;
+    private DcMotor flm;
+    private DcMotor blm;
+    private DcMotor frm;
+    private DcMotor brm;
     private DcMotor arm;
     private Servo claw;
     private Servo rotate;
@@ -72,26 +73,40 @@ public class MecanumWheels extends OpMode
     private double armPower;
 
 
-    private final static double CLAW_HOME = 0.0;
+    private final static double CLAW_HOME = .6;
     private double clawPosition = CLAW_HOME;
     private final double CLAW_SPEED = 0.2;
 
-    private final static double ROTATE_HOME = 0.0;
+    private final static double ROTATE_HOME = 0.92;
     private double rotatePosition = ROTATE_HOME;
     private final double ROTATE_SPEED = 0.2;
 
     private double sin;
     private double cos;
     
+    public void test(double x, double y, double turn){
+        telemetry.addData("x = ", x);
+        telemetry.addData("y = ", y);
+        telemetry.addData("Turn = ", turn);
+    }
+    
     public void arm(double left_trigger) {
         if (left_trigger >= .2){
-            armPower = left_trigger;
+            armPower = 1;
         } else if (left_trigger < .2){
             armPower = 0;
         }
-
         arm.setPower(armPower);
     }
+     public void armBack(double right_trigger) {
+        if (right_trigger >= .2){
+            armPower = -(right_trigger);
+        } else if (right_trigger < .2){
+            armPower = 0;
+        }
+        arm.setPower(armPower);
+    }
+
 
     public void mecanumWheels(double x, double y, double turn){
         double theta = Math.atan2(y,x);
@@ -114,10 +129,10 @@ public class MecanumWheels extends OpMode
             rightBackPower /= power + turn;
         }
 
-        leftFront.setPower(leftFrontPower);
-        leftBack.setPower(leftBackPower);
-        rightFront.setPower(rightFrontPower);
-        rightBack.setPower(rightBackPower);
+        flm.setPower(leftFrontPower);
+        blm.setPower(leftBackPower);
+        frm.setPower(rightFrontPower);
+        brm.setPower(rightBackPower);
 
         telemetry.addData("Theta = ", theta);
         telemetry.addData("Turn = ", turn);
@@ -128,39 +143,58 @@ public class MecanumWheels extends OpMode
         telemetry.addData("rightFrontPower = ", rightFrontPower);
         telemetry.addData("rightBackPower = ", rightBackPower);
     }
-
-    public void claw (boolean a, boolean b){
+    /*
+    public void claw (boolean a, boolean b, boolean b2){
         if (a){
-            clawPosition += CLAW_SPEED;
+            clawPosition = 0.3;
         } else if (b) {
-            clawPosition -= CLAW_SPEED;
+            clawPosition = 0.7;
+        }
+        else if (b2) {
+            clawPosition = 0.7;
         }
         claw.setPosition(clawPosition);
     }
-
+    */
+    
     public void rotate (boolean x, boolean y){
+        /*
+         if (x){
+             rotatePosition = .5;
+         } else if (y) {
+             rotatePosition = .2;
+         }
+         rotate.setPosition(rotatePosition);
+        
+        
+        while(x){
+            rotatePosition += 0.05;
+            rotate.setPosition(rotatePosition)
+        }
+        stop here
         if (x){
-            rotatePosition += ROTATE_SPEED;
+            rotatePosition = 0.9;
         } else if (y) {
-            rotatePosition -= ROTATE_SPEED;
+            rotatePosition = 0.2;
         }
         rotate.setPosition(rotatePosition);
-    }
-
-    public void initMotors(){
-        leftFront  = hardwareMap.get(DcMotor.class, "left_front");
-        leftBack = hardwareMap.get(DcMotor.class, "left_back");
-        rightFront = hardwareMap.get(DcMotor.class, "right_front");
-        rightBack = hardwareMap.get(DcMotor.class, "right_back");
-        arm = hardwareMap.get(DcMotor.class, "arm");
-
-        leftFront.setDirection(DcMotor.Direction.FORWARD);
-        leftBack.setDirection(DcMotor.Direction.FORWARD);
-        rightFront.setDirection(DcMotor.Direction.REVERSE);
-        rightBack.setDirection(DcMotor.Direction.REVERSE);
-        arm.setDirection(DcMotorSimple.Direction.FORWARD);
+        */
     }
     
+    public void initMotors(){
+        flm  = hardwareMap.get(DcMotor.class, "flm");
+        blm = hardwareMap.get(DcMotor.class, "blm");
+        frm = hardwareMap.get(DcMotor.class, "frm");
+        brm = hardwareMap.get(DcMotor.class, "brm");
+        //arm = hardwareMap.get(DcMotor.class, "arm");
+
+        flm.setDirection(DcMotor.Direction.REVERSE);
+        blm.setDirection(DcMotor.Direction.FORWARD); //was set to forward, now reverse
+        frm.setDirection(DcMotor.Direction.REVERSE);
+        brm.setDirection(DcMotor.Direction.FORWARD);
+        //arm.setDirection(DcMotorSimple.Direction.FORWARD);
+    }
+    /*
     public void initServos(){
         claw = hardwareMap.servo.get("claw");
         arm.setPosition(ARM_HOME);
@@ -168,7 +202,7 @@ public class MecanumWheels extends OpMode
         rotate = hardwareMap.servo.get("rotate");
         rotate.setPosition(ROTATE_HOME);
     }
-
+    */
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -176,7 +210,7 @@ public class MecanumWheels extends OpMode
     public void init() {
         
         initMotors();
-        initServos();
+        //initServos();
 
         String [] sayings =
                 new String[] {
@@ -189,6 +223,7 @@ public class MecanumWheels extends OpMode
                         "About to win the contest"
                 };
         telemetry.addData("Status: ", sayings[(int) (Math.random() * sayings.length)]);
+        
     }
 
     /*
@@ -214,20 +249,51 @@ public class MecanumWheels extends OpMode
     public void loop() {
 
         double left_stick_x = gamepad1.left_stick_x;
+        //double left_stick_y = -gamepad1.left_stick_y;
         double left_stick_y = -gamepad1.left_stick_y;
         double turn = gamepad1.right_stick_x;
 
-        double a = gamepad1.a;
-        double b = gamepad1.b;
-        double x = gamepad1.x;
-        double y = gamepad1.y;
+        boolean a = gamepad1.a;
+        boolean b =  gamepad1.b;
+        boolean b2 = gamepad2.b;
+        boolean x = gamepad2.x;
+        boolean y = gamepad2.y;
 
         double left_trigger = gamepad1.left_trigger;
-
-        mecanumWheels(left_stick_x, left_stick_y, turn);
-        claw(a,b);
-        rotate(x, y);
-        arm(left_trigger);
+        double right_trigger = gamepad2.right_trigger;
+        
+        //mecanumWheels(left_stick_x/2, left_stick_y/2, turn/2);
+        
+        double horizontal = gamepad1.left_stick_x;
+        double pivot = gamepad1.right_stick_x;
+        double vertical = gamepad1.left_stick_y;
+        double sensitivity = gamepad1.left_trigger;
+        if (sensitivity > 0) {
+            vertical = (float)(vertical*0.5);
+            horizontal = (float)(horizontal*0.5);
+            pivot = (float)(pivot*0.5);
+        }
+        
+        /*
+        frm.setPower(0.7*(-pivot+(vertical-horizontal))/1.4);
+        brm.setPower(0.7*(-pivot+vertical+horizontal)/5);
+        flm.setPower(0.7*(pivot+vertical+horizontal)/1.4);
+        blm.setPower(0.7*(pivot+(vertical-horizontal))/5);
+        */
+        
+        frm.setPower(0.7*(-pivot+(vertical-horizontal)));
+        brm.setPower(0.7*(-pivot+vertical+horizontal));
+        flm.setPower(0.7*(pivot+vertical+horizontal));
+        blm.setPower(0.7*(pivot+(vertical-horizontal)));
+        
+        
+        
+        //claw(a,b,b2);
+        //rotate(x, y);
+        //armBack(right_trigger);
+        //arm(left_trigger);
+        
+        test(left_stick_x, left_stick_y, turn);
     }
 
     /*
