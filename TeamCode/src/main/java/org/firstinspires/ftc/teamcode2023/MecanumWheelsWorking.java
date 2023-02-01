@@ -38,22 +38,25 @@ import com.qualcomm.robotcore.util.Range;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
- * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
+ * An OpMode is a 'program' that runs in either the autonomous or the teleop
+ * period of an FTC match.
  * The names of OpModes appear on the menu of the FTC Driver Station.
  * When an selection is made from the menu, the corresponding OpMode
  * class is instantiated on the Robot Controller and executed.
  *
- * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
+ * This particular OpMode just executes a basic Tank Drive Teleop for a two
+ * wheeled robot
  * It includes all the skeletal structure that all iterative OpModes contain.
  *
- * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
+ * Use Android Studios to Copy this Class, and Paste it into your team's code
+ * folder with a new name.
+ * Remove or comment out the @Disabled line to add this opmode to the Driver
+ * Station OpMode list
  */
 
-@TeleOp(name="MechyWheels Work", group="Iterative Opmode")
+@TeleOp(name = "MechyWheels Work", group = "Iterative Opmode")
 
-public class MecanumWheelsWorking extends OpMode
-{
+public class MecanumWheelsWorking extends OpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFront = null;
@@ -61,12 +64,50 @@ public class MecanumWheelsWorking extends OpMode
     private DcMotor rightFront = null;
     private DcMotor rightBack = null;
 
-    /*
-     * Code to run ONCE when the driver hits INIT
-     */
+    public void mecanumWheels() {
+        double max;
+
+        double axial = -gamepad1.left_stick_y / 0.5; // pushing stick forward gives negative value ** it is
+                                                     // diveded to match the sideways speed with the forward and back
+                                                     // speed
+        double lateral = gamepad1.left_stick_x;
+        double yaw = gamepad1.right_stick_x / 0.5; // Note: divided to make rotation slower
+
+        // Combine the joystick requests for each axis-motion to determine each wheel's
+        // power.
+        // Set up a variable for each drive wheel to save the power level for telemetry.
+        double leftFrontPower = axial + lateral + yaw;
+        double rightFrontPower = axial - lateral - yaw;
+        double leftBackPower = axial - lateral + yaw;
+        double rightBackPower = axial + lateral - yaw;
+
+        // Normalize the values so no wheel power exceeds 100%
+        max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+        max = Math.max(max, Math.abs(leftBackPower));
+        max = Math.max(max, Math.abs(rightBackPower));
+
+        if (max > 1.0) {
+            leftFrontPower /= max;
+            rightFrontPower /= max;
+            leftBackPower /= max;
+            rightBackPower /= max;
+        }
+
+        // Send calculated power to wheels
+        leftFront.setPower(leftFrontPower);
+        rightFront.setPower(rightFrontPower);
+        leftBack.setPower(leftBackPower);
+        rightBack.setPower(rightBackPower);
+
+        telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
+        telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+    }
+
+
+
     @Override
     public void init() {
-        leftFront  = hardwareMap.get(DcMotor.class, "flm");
+        leftFront = hardwareMap.get(DcMotor.class, "flm");
         leftBack = hardwareMap.get(DcMotor.class, "blm");
         rightFront = hardwareMap.get(DcMotor.class, "frm");
         rightBack = hardwareMap.get(DcMotor.class, "brm");
@@ -97,60 +138,10 @@ public class MecanumWheelsWorking extends OpMode
      */
     @Override
     public void loop() {
-        double max;
+        
+        mecanumWheels();
 
-        // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-        double axial   = -gamepad1.left_stick_y/0.5;  // Note: pushing stick forward gives negative value ** it is diveded to match the sideways speed with the forward and back speed
-        double lateral =  gamepad1.left_stick_x;
-        double yaw     =  gamepad1.right_stick_x/0.5; // Note: divided to make rotation slower
-
-        // Combine the joystick requests for each axis-motion to determine each wheel's power.
-        // Set up a variable for each drive wheel to save the power level for telemetry.
-        double leftFrontPower  = axial + lateral + yaw;
-        double rightFrontPower = axial - lateral - yaw;
-        double leftBackPower   = axial - lateral + yaw;
-        double rightBackPower  = axial + lateral - yaw;
-
-        // Normalize the values so no wheel power exceeds 100%
-        // This ensures that the robot maintains the desired motion.
-        max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-        max = Math.max(max, Math.abs(leftBackPower));
-        max = Math.max(max, Math.abs(rightBackPower));
-
-        if (max > 1.0) {
-            leftFrontPower  /= max;
-            rightFrontPower /= max;
-            leftBackPower   /= max;
-            rightBackPower  /= max;
-        }
-
-        // This is test code:
-        //
-        // Uncomment the following code to test your motor directions.
-        // Each button should make the corresponding motor run FORWARD.
-        //   1) First get all the motors to take to correct positions on the robot
-        //      by adjusting your Robot Configuration if necessary.
-        //   2) Then make sure they run in the correct direction by modifying the
-        //      the setDirection() calls above.
-        // Once the correct motors move in the correct direction re-comment this code.
-
-            /*
-            leftFrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
-            leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
-            rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
-            rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
-            */
-
-        // Send calculated power to wheels
-        leftFront.setPower(leftFrontPower);
-        rightFront.setPower(rightFrontPower);
-        leftBack.setPower(leftBackPower);
-        rightBack.setPower(rightBackPower);
-
-        // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-        telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
         telemetry.update();
 
     }
