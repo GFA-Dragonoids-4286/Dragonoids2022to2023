@@ -113,7 +113,7 @@ public class MecanumWheelsWorking extends OpMode {
         leftBack = hardwareMap.get(DcMotor.class, "blm");
         rightFront = hardwareMap.get(DcMotor.class, "frm");
         rightBack = hardwareMap.get(DcMotor.class, "brm");
-        slider = hardwareMap.get(DcMotor.class, "Slider")
+        slider = hardwareMap.get(DcMotor.class, "Slider");
         
         //Sets Direction of Wheels
         leftFront.setDirection(DcMotor.Direction.FORWARD);
