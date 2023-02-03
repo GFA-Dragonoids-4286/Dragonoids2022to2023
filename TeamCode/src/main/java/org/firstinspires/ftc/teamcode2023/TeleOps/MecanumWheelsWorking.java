@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Math;
 
 /**
@@ -36,12 +38,6 @@ public class MecanumWheelsWorking extends OpMode {
 
     //Claw Servo
     private Servo claw = null;
-
-    // Use Encoders
-    public float currentLeftFrontValue = 0.0f;
-    public float currentRightFrontValue = 0.0f;
-    public float currentLeftBackValue = 0.0f;
-    public float currentRightBackValue = 0.0f;
 
     public void mecanumWheels(double leftStickY, double leftStickX, double rightStickX) {
         double max;
