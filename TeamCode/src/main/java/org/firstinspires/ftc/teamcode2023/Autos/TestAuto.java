@@ -19,6 +19,13 @@ public class TestAuto extends OpMode {
   private DcMotor rightFront = null;
   private DcMotor rightBack = null;
 
+
+  private int leftFrontPos;
+  private int leftBackPos;
+  private int rightBackPos;
+  private int rightFrontPos;
+
+
   @Override
   public void init() {
     imu = hardwareMap.get(Gyroscope.class, "imu");
@@ -27,16 +34,16 @@ public class TestAuto extends OpMode {
     rightFront = hardwareMap.get(DcMotor.class, "frm");
     rightBack = hardwareMap.get(DcMotor.class, "brm");
 
+    leftFront.setMode(DcMotor.Direction.STOP_AND_RESET_ENCODER);
+    leftBack.setMode(DcMotor.Direction.STOP_AND_RESET_ENCODER);
+    rightFront.setMode(DcMotor.Direction.STOP_AND_RESET_ENCODER);
+    rightBack.setMode(DcMotor.Direction.STOP_AND_RESET_ENCODER);
+
     leftFront.setDirection(DcMotor.Direction.FORWARD);
     leftBack.setDirection(DcMotor.Direction.FORWARD);
     rightFront.setDirection(DcMotor.Direction.REVERSE);
     rightBack.setDirection(DcMotor.Direction.REVERSE);
     telemetry.addData("Status", "Initialized");
-
-    leftFront.setMode(DcMotor.Direction.STOP_AND_RESET_ENCODER);
-    leftBack.setMode(DcMotor.Direction.STOP_AND_RESET_ENCODER);
-    rightFront.setMode(DcMotor.Direction.STOP_AND_RESET_ENCODER);
-    rightBack.setMode(DcMotor.Direction.STOP_AND_RESET_ENCODER);
 
   }
 
