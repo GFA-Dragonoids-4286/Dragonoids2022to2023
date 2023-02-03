@@ -33,8 +33,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+
+import java.util.Math;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -63,15 +66,17 @@ public class MecanumWheelsWorking extends OpMode {
     private DcMotor leftBack = null;
     private DcMotor rightFront = null;
     private DcMotor rightBack = null;
+    private Servo slider = null;
+    private Servo claw = null;
 
-    public void mecanumWheels() {
+    public void mecanumWheels(double leftStickY, double leftStickX, double rightStickX) {
         double max;
 
-        double axial = -gamepad1.left_stick_y / 0.5; // pushing stick forward gives negative value ** it is
+        double axial = -leftStickY / 0.5; // pushing stick forward gives negative value ** it is
                                                      // diveded to match the sideways speed with the forward and back
                                                      // speed
-        double lateral = gamepad1.left_stick_x;
-        double yaw = gamepad1.right_stick_x / 0.5; // Note: divided to make rotation slower
+        double lateral = leftStickX;
+        double yaw = rightStickX / 0.5; // Note: divided to make rotation slower
 
         // Combine the joystick requests for each axis-motion to determine each wheel's
         // power.
@@ -103,19 +108,71 @@ public class MecanumWheelsWorking extends OpMode {
         telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
     }
 
+    public void driveSlider(double triggerOutputRight, double triggerOutputLeft) {
 
+        double power = (triggerOutputRight + -triggerOutputLeft)/10; //adds power to get what the user wants
 
-    @Override
-    public void init() {
+        double targetPosition = slider.getPosition() + power;
+
+        slider.setDirection(targetPosition);
+    }
+
+    public void driveClaw(boolean open, boolean close) {
+        double openValue = 0.75;
+        double closeValue = 0.1;
+
+        if(open) {
+            claw.setPosition(openValue);
+        } 
+        else if(close) {
+            claw.setPosition(closeValue);
+        }
+        
+    }
+
+    public void initWheels() {
         leftFront = hardwareMap.get(DcMotor.class, "flm");
         leftBack = hardwareMap.get(DcMotor.class, "blm");
         rightFront = hardwareMap.get(DcMotor.class, "frm");
         rightBack = hardwareMap.get(DcMotor.class, "brm");
+        slider = hardwareMap.get(DcMotor.class, "Slider")
 
         leftFront.setDirection(DcMotor.Direction.FORWARD);
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
+
+        
+    }
+
+    public void initSlider() {
+        slider = hardwareMap.get(Servo.class, "slider");
+    }
+
+    public void initArm() {
+        claw = hardwareMap.get(Servo.class, "claw")
+    }
+
+    public void initMessages() {
+        String[] possibleSayings =
+        new String[] {
+          "Let's roll.",
+          "Ready To Rumble.",
+          "Beep Boop.",
+          "Taking Over The World",
+          "About to Win The Contest",
+          "Don't get stuck"
+        };
+        telemetry.addData("Status", possibleSayings[(int) (Math.random() * possibleSayings.length)]);
+    }
+    
+    @Override
+    public void init() {
+        initWheels();
+        initSlider();
+        initArm();
+        
+        initMessages();
     }
 
     /*
@@ -139,7 +196,11 @@ public class MecanumWheelsWorking extends OpMode {
     @Override
     public void loop() {
         
-        mecanumWheels();
+        mecanumWheels(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+        
+        driveSlider(gamepad1.left_trigger, gamepad1.right_trigger);
+        driveClaw(gamepad1.right_bumper, gamepad1.left_bumper);
+
 
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.update();
