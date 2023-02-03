@@ -24,12 +24,24 @@ import java.util.Math;
 public class MecanumWheelsWorking extends OpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
+
+    //Wheels
     private DcMotor leftFront = null;
     private DcMotor leftBack = null;
     private DcMotor rightFront = null;
     private DcMotor rightBack = null;
+
+    //Slider Servo
     private Servo slider = null;
+
+    //Claw Servo
     private Servo claw = null;
+
+    // Use Encoders
+    public float currentLeftFrontValue = 0.0f;
+    public float currentRightFrontValue = 0.0f;
+    public float currentLeftBackValue = 0.0f;
+    public float currentRightBackValue = 0.0f;
 
     public void mecanumWheels(double leftStickY, double leftStickX, double rightStickX) {
         double max;
@@ -109,7 +121,14 @@ public class MecanumWheelsWorking extends OpMode {
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
 
-        
+        // Make it so that if there is no power to motors, they break.
+        // REASON: Makes the robot stop much faster.
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+            
     }
 
     public void initSlider() {
@@ -118,7 +137,7 @@ public class MecanumWheelsWorking extends OpMode {
     }
 
     public void initArm() {
-        claw = hardwareMap.get(Servo.class, "claw")
+        claw = hardwareMap.get(Servo.class, "claw");
     }
 
     public void initMessages() {
@@ -184,7 +203,7 @@ public class MecanumWheelsWorking extends OpMode {
      */
     @Override
     public void stop() {
-        
+
         // Create an Array of Possible Sayings the Robot can Say When it Shuts Down
         String[] possibleSayings =
         new String[] {
