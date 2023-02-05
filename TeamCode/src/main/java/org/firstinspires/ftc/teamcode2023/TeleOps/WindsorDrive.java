@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode2023.TeleOps;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -7,9 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 //import java.util.Math;
 
 /**
@@ -21,7 +18,7 @@ import java.util.Date;
  * class is instantiated on the Robot Controller and executed.
  */
 
-@TeleOp(name = "NewDrive2", group = "Iterative Opmode")
+@TeleOp(name = "WindsorDrive", group = "Iterative Opmode")
 
 public class NewDrive2 extends OpMode {
     // Declare OpMode members.
@@ -32,6 +29,8 @@ public class NewDrive2 extends OpMode {
     private DcMotor leftBack = null;
     private DcMotor rightFront = null;
     private DcMotor rightBack = null;
+
+    private double slowFactor = 1;
 
     //Slider Servo
     private DcMotor slider;
@@ -45,8 +44,6 @@ public class NewDrive2 extends OpMode {
     private final static double CLAW_HOME = 0.4;
     private double clawPosition = CLAW_HOME;
     private final double CLAW_SPEED = 0.2;
-
-    private double slowFactor;
 
     public void brianMecanumWheels(double leftStickY, double leftStickX, double rightStickX) {
         double max;
