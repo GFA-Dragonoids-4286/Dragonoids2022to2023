@@ -1,26 +1,28 @@
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Math;
 
 @Autonomous(name="AutoV2", group="Autonomous")
 public class AutoV2 extends LinearOpMode {
 
   private Gyroscope imu;
   private ElapsedTime runtime = new ElapsedTime();
-  private DcMotor leftFront = null;
-  private DcMotor leftBack = null;
-  private DcMotor rightFront = null;
-  private DcMotor rightBack = null;
+  private DcMotor lf = null;
+  private DcMotor lb = null;
+  private DcMotor rf = null;
+  private DcMotor rb = null;
 
   // Use Encoders
   public float currentLeftFrontValue = 0.0f;
@@ -39,10 +41,10 @@ public class AutoV2 extends LinearOpMode {
     double frp = (y - x - rx) / denominator;
     double brp = (y + x - rx) / denominator;
 
-    leftFront.setPower(flp);
-    leftBack.setPower(blp);
-    rightFront.setPower(frp);
-    rightBack.setPower(brp);
+    lf.setPower(flp);
+    lb.setPower(blp);
+    rf.setPower(frp);
+    rb.setPower(brp);
 }
 //INIT methods
 public void InitWheels() {
