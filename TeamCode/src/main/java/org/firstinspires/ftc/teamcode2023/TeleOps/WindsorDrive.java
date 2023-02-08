@@ -20,7 +20,7 @@ import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name = "WindsorDrive", group = "Iterative Opmode")
 
-public class NewDrive2 extends OpMode {
+public class WindsorDrive extends OpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 

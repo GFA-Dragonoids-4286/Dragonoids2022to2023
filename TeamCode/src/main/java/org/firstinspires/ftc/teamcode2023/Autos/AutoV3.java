@@ -7,6 +7,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+
+import java.lang.Math;
+
 @Autonomous(name="AutoV3", group="Autonomous")
 public class AutoV3 extends LinearOpMode {
   private ElapsedTime runtime = new ElapsedTime();
@@ -25,6 +32,7 @@ public class AutoV3 extends LinearOpMode {
 
   //gyro
   BNO055IMU imu;
+  Orientation angles = null;
 
 
   //motorData
@@ -34,17 +42,62 @@ public class AutoV3 extends LinearOpMode {
   static final double countsPerInch = (MotorRevolution * DriveGearReduction) / (wheelWidth * 3.1415);
 
 
-  public void mecanumWheelsWithEncoders(double translationAngle, double translationPower, double turnPower) {
-    double ADPower = translationPower * Math.sqrt(2) * 0.5 * (Math.sin(translationAngle) + Math.cos(translationAngle));
-    double BCPower = translationPower * Math.sqrt(2) * 0.5 * (Math.sin(translationAngle) - Math.cos(translationAngle));
+  public void driveStraight(int distance, double speed) {
+    lf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    lb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    rf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    rb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-    double turningScale = Math.max(Math.abs(ADPower + turnPower), Math.abs(ADPower - turnPower));
-    turningScale = Math.max(turningScale, Math.max(Math.abs(BCPower + turnPower), Math.abs(BCPower - turnPower)));
+    lf.setTargetPosition((int) Math.rint(countsPerInch * distance));
+    lb.setTargetPosition((int) Math.rint(countsPerInch * distance));
+    rf.setTargetPosition((int) Math.rint(countsPerInch * distance));
+    rb.setTargetPosition((int) Math.rint(countsPerInch * distance));
 
-    lf.setPower((ADPower - turningScale) / turningScale);
-    lb.setPower((BCPower - turningScale) / turningScale);
-    rf.setPower((BCPower + turningScale) / turningScale);
-    rb.setPower((ADPower + turningScale) / turningScale);
+    lf.setPower(speed);
+    lb.setPower(speed);
+    rf.setPower(speed);
+    rb.setPower(speed);
+  }
+
+  public void halt() {
+    double speed = 0;
+
+    lf.setPower(speed);
+    lb.setPower(speed);
+    rf.setPower(speed);
+    rb.setPower(speed);
+  }
+
+  public void turn(int degrees, double speed) {
+    angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+    lf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    lb.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    rf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    rb.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+    double currentHeading = angles.firstAngle;
+    double newHeading = currentHeading + degrees; //need to make sure that its not over 360
+    if(newHeading > 360) {
+      newHeading -= 360;
+    }
+
+    if(currentHeading>= newHeading) {
+      while (!(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle == newHeading)) {
+        lf.setPower(speed);
+        lb.setPower(speed);
+        rf.setPower(-speed);
+        rb.setPower(-speed);
+      }
+    }
+    else if(currentHeading <= newHeading) {
+      while (!(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle == newHeading)) {
+        lf.setPower(-speed);
+        lb.setPower(-speed);
+        rf.setPower(speed);
+        rb.setPower(speed);
+      }
+    }
   }
 
   public void initWheels() {
