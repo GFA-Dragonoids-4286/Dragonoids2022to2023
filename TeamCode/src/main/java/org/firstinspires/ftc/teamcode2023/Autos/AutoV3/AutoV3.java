@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode2023.Autos;
+package org.firstinspires.ftc.teamcode2023.Autos.AutoV3;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -78,6 +78,7 @@ public class AutoV3 extends LinearOpMode {
 
     double currentHeading = angles.firstAngle;
     double newHeading = currentHeading + degrees; //need to make sure that its not over 360
+
     if(newHeading > 360) {
       newHeading -= 360;
     }
@@ -174,9 +175,9 @@ public class AutoV3 extends LinearOpMode {
 
   @Override
   public void runOpMode() throws InterruptedException{
-      //hardware stuff
-      initWheels();
-      initIMU();
+    //hardware stuff
+    initWheels();
+    initIMU();
 
     waitForStart();
 
