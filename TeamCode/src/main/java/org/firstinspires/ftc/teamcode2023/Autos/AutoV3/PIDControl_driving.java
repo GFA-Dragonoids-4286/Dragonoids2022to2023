@@ -33,7 +33,7 @@ public class PIDControl_driving {
         accumulatedError+= error;
 
         //resets accumulatedError if with threshold
-        if (Math.abs(error) < 15) {
+        if (Math.abs(error) < 10) {
             accumulatedError = 0;
         }
         //makes sure sins are the same

@@ -135,6 +135,7 @@ public class RobotoHardware {
         lb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
     }
 
     public void deencodeMotors() {
@@ -142,6 +143,10 @@ public class RobotoHardware {
         lb.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rb.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public double getAverageEncoderValues() {
+        return (lf.getCurrentPosition() * lb.getCurrentPosition() * rf.getCurrentPosition() * rb.getCurrentPosition())/4;
     }
 
 }

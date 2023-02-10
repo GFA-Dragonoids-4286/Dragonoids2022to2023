@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode2023.Autos.AutoV3;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -47,6 +49,20 @@ public class AutoFramework extends LinearOpMode {
         telemetry.update();
         return currentAngle;
 
+    }
+
+
+    //put into new file
+    public double getXAcceleration() {
+        Acceleration acceleration = robot.imu.getAcceleration();
+
+        return acceleration.xAccel;
+    }
+
+    public double getYAcceleration() {
+        Acceleration acceleration = robot.imu.getAcceleration();
+
+        return acceleration.yAccel;
     }
 
     public void turn(double degrees) {
@@ -104,13 +120,13 @@ public class AutoFramework extends LinearOpMode {
     }
 
     public void drivePID(double inches) {
-        robot.encodeMotors();
+        robot.deencodeMotors();
 
         double counts = inches * robot.countsPerInch;
         PIDControl_driving pid = new PIDControl_driving(counts, 0.01, 0, 0.003);
 
-        while(opModeIsActive() && Math.abs(counts) - getAngle() > 2) {
-            double motorPower = pid.Update(getAngle());
+        while(opModeIsActive() && Math.abs(counts) - robot.getAverageEncoderValues() > 2) {
+            double motorPower = pid.Update(robot.getAverageEncoderValues());
             robot.driveMotors(motorPower, motorPower, motorPower, motorPower);
 
         }
